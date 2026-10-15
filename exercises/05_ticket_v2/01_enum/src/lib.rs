@@ -1,21 +1,22 @@
-// TODO: use `Status` as type for `Ticket::status`
-//   Adjust the signature and implementation of all other methods as necessary.
-
+#[allow(unused)]
 #[derive(Debug, PartialEq)]
-// `derive`s are recursive: it can only derive `PartialEq` if all fields also implement `PartialEq`.
-// Same holds for `Debug`. Do what you must with `Status` to make this work.
 struct Ticket {
     title: String,
     description: String,
-    status: String,
+    status: Status,
 }
 
+#[allow(unused)]
+#[derive(Copy, PartialEq, Eq, Debug, Clone)]
 enum Status {
-    // TODO: add the missing variants
+    ToDo,
+    InProgress,
+    Done,
 }
 
 impl Ticket {
-    pub fn new(title: String, description: String, status: String) -> Ticket {
+    #[allow(unused)]
+    pub fn new(title: String, description: String, status: Status) -> Ticket {
         if title.is_empty() {
             panic!("Title cannot be empty");
         }
@@ -28,7 +29,7 @@ impl Ticket {
         if description.len() > 500 {
             panic!("Description cannot be longer than 500 bytes");
         }
-        if status != "To-Do" && status != "In Progress" && status != "Done" {
+        if status != Status::ToDo && status != Status::InProgress && status != Status::Done {
             panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
         }
 
@@ -39,15 +40,18 @@ impl Ticket {
         }
     }
 
+    #[allow(unused)]
     pub fn title(&self) -> &String {
         &self.title
     }
 
+    #[allow(unused)]
     pub fn description(&self) -> &String {
         &self.description
     }
 
-    pub fn status(&self) -> &String {
+    #[allow(unused)]
+    pub fn status(&self) -> &Status {
         &self.status
     }
 }

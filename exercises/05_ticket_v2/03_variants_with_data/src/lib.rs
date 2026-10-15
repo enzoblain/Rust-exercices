@@ -1,7 +1,3 @@
-// TODO: Implement `Ticket::assigned_to`.
-//  Return the name of the person assigned to the ticket, if the ticket is in progress.
-//  Panic otherwise.
-
 #[derive(Debug, PartialEq)]
 struct Ticket {
     title: String,
@@ -9,6 +5,7 @@ struct Ticket {
     status: Status,
 }
 
+#[allow(unused)]
 #[derive(Debug, PartialEq)]
 enum Status {
     ToDo,
@@ -17,6 +14,7 @@ enum Status {
 }
 
 impl Ticket {
+    #[allow(unused)]
     pub fn new(title: String, description: String, status: Status) -> Ticket {
         if title.is_empty() {
             panic!("Title cannot be empty");
@@ -37,8 +35,13 @@ impl Ticket {
             status,
         }
     }
+
+    #[allow(unused)]
     pub fn assigned_to(&self) -> &str {
-        todo!()
+        match &self.status {
+            Status::InProgress { assigned_to } => assigned_to.as_str(),
+            _ => panic!("Only `In-Progress` tickets can be assigned to someone"),
+        }
     }
 }
 

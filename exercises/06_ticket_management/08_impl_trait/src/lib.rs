@@ -21,6 +21,12 @@ pub enum Status {
     Done,
 }
 
+impl Default for TicketStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TicketStore {
     pub fn new() -> Self {
         Self {
@@ -30,6 +36,12 @@ impl TicketStore {
 
     pub fn add_ticket(&mut self, ticket: Ticket) {
         self.tickets.push(ticket);
+    }
+
+    pub fn in_progress(&self) -> impl Iterator<Item = &Ticket> {
+        self.tickets
+            .iter()
+            .filter(|t| t.status == Status::InProgress)
     }
 }
 

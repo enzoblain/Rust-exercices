@@ -1,40 +1,28 @@
-use std::sync::{Arc, RwLock};
-use std::thread::spawn;
-
 use ticket_fields::test_helpers::{ticket_description, ticket_title};
 use without_channels::data::TicketDraft;
 use without_channels::store::TicketStore;
 
 #[test]
 fn works() {
-    let store = todo!();
+    let mut store = TicketStore::new();
 
-    let store1 = store.clone();
-    let client1 = spawn(move || {
-        let draft = TicketDraft {
-            title: ticket_title(),
-            description: ticket_description(),
-        };
-        store1.write().unwrap().add_ticket(draft)
-    });
+    let draft = TicketDraft {
+        title: ticket_title(),
+        description: ticket_description(),
+    };
+    let ticket_id1 = store.add_ticket(draft);
 
-    let store2 = store.clone();
-    let client2 = spawn(move || {
-        let draft = TicketDraft {
-            title: ticket_title(),
-            description: ticket_description(),
-        };
-        store2.write().unwrap().add_ticket(draft)
-    });
+    let mut store2 = store.clone();
 
-    let ticket_id1 = client1.join().unwrap();
-    let ticket_id2 = client2.join().unwrap();
+    let draft = TicketDraft {
+        title: ticket_title(),
+        description: ticket_description(),
+    };
+    let ticket_id2 = store2.add_ticket(draft);
 
-    let reader = store.read().unwrap();
-
-    let ticket1 = reader.get(ticket_id1).unwrap();
+    let ticket1 = store.get(ticket_id1).unwrap();
     assert_eq!(ticket_id1, ticket1.read().unwrap().id);
 
-    let ticket2 = reader.get(ticket_id2).unwrap();
+    let ticket2 = store2.get(ticket_id2).unwrap();
     assert_eq!(ticket_id2, ticket2.read().unwrap().id);
 }

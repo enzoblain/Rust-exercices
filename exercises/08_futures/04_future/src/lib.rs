@@ -5,12 +5,16 @@
 use std::rc::Rc;
 use tokio::task::yield_now;
 
+#[allow(unused)]
 fn spawner() {
     tokio::spawn(example());
 }
 
+#[allow(unused)]
 async fn example() {
-    let non_send = Rc::new(1);
+    {
+        let non_send = Rc::new(1);
+        println!("{}", non_send);
+    }
     yield_now().await;
-    println!("{}", non_send);
 }

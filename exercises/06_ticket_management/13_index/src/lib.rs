@@ -1,11 +1,34 @@
 // TODO: Implement `Index<&TicketId>` and `Index<TicketId>` for `TicketStore`.
 
+use std::ops::Index;
+
 use ticket_fields::{TicketDescription, TicketTitle};
 
 #[derive(Clone)]
 pub struct TicketStore {
     tickets: Vec<Ticket>,
     counter: u64,
+}
+
+impl Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, index: &TicketId) -> &Self::Output {
+        self.tickets
+            .iter()
+            .filter(|t| t.id == *index)
+            .collect::<Vec<_>>()
+            .first()
+            .unwrap()
+    }
+}
+
+impl Index<TicketId> for TicketStore {
+    type Output = Ticket;
+
+    fn index(&self, index: TicketId) -> &Self::Output {
+        &self[&index]
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -30,6 +53,12 @@ pub enum Status {
     ToDo,
     InProgress,
     Done,
+}
+
+impl Default for TicketStore {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl TicketStore {
@@ -82,7 +111,7 @@ mod tests {
             description: ticket_description(),
         };
         let id2 = store.add_ticket(draft2);
-        let ticket2 = &store[&id2];
+        let _ticket2 = &store[&id2];
 
         assert_ne!(id1, id2);
     }

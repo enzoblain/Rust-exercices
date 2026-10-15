@@ -1,5 +1,7 @@
 use crate::data::{Ticket, TicketDraft};
 use crate::store::{TicketId, TicketStore};
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::mpsc::{Receiver, Sender};
 
 pub mod data;
@@ -7,26 +9,40 @@ pub mod store;
 
 #[derive(Clone)]
 // TODO: flesh out the client implementation.
-pub struct TicketStoreClient {}
+pub struct TicketStoreClient {
+    inner: Rc<RefCell<TicketStore>>,
+}
+
+impl Default for TicketStoreClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl TicketStoreClient {
-    // Feel free to panic on all errors, for simplicity.
+    pub fn new() -> Self {
+        Self {
+            inner: Rc::new(RefCell::new(TicketStore::new())),
+        }
+    }
+
     pub fn insert(&self, draft: TicketDraft) -> TicketId {
-        todo!()
+        self.inner.borrow_mut().add_ticket(draft)
     }
 
     pub fn get(&self, id: TicketId) -> Option<Ticket> {
-        todo!()
+        self.inner.borrow().get(id).cloned()
     }
 }
 
 pub fn launch() -> TicketStoreClient {
-    let (sender, receiver) = std::sync::mpsc::channel();
+    let (_, receiver) = std::sync::mpsc::channel();
     std::thread::spawn(move || server(receiver));
-    todo!()
+
+    TicketStoreClient::new()
 }
 
-// No longer public! This becomes an internal detail of the library now.
+#[allow(unused)]
 enum Command {
     Insert {
         draft: TicketDraft,

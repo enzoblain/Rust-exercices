@@ -10,6 +10,12 @@ pub struct TicketStore {
     counter: u64,
 }
 
+impl Default for TicketStore {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl TicketStore {
     pub fn new() -> Self {
         Self {
